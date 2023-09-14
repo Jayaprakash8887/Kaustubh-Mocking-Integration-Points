@@ -1,0 +1,77 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+OPTIONS    /*all                        @controllers.LearnerController.preflight(all)
+
+# Health Check APIs
+GET  /health                                  @controllers.healthmanager.HealthController.getHealth(request: play.mvc.Http.Request)
+GET  /service/health                      @controllers.healthmanager.HealthController.getServiceHealth(request: play.mvc.Http.Request)
+
+# Sync API
+POST /v1/data/sync                          @controllers.search.SearchController.sync(request: play.mvc.Http.Request)
+
+# Cache APIs
+DELETE /v1/cache/clear/:mapName @controllers.cache.CacheController.clearCache(mapName:String, request: play.mvc.Http.Request)
+
+# Course Management APIs
+GET      /v1/user/courses/list/:uid	    @controllers.courseenrollment.CourseEnrollmentController.getEnrolledCourses(uid:String, request: play.mvc.Http.Request)
+GET      /private/v1/user/courses/list/:uid	    @controllers.courseenrollment.CourseEnrollmentController.privateGetEnrolledCourses(uid:String, request: play.mvc.Http.Request)
+POST     /v2/user/courses/list	    @controllers.courseenrollment.CourseEnrollmentController.getUserEnrolledCourses(request: play.mvc.Http.Request)
+POST     /v2/user/courses/admin/list	    @controllers.courseenrollment.CourseEnrollmentController.adminGetUserEnrolledCourses(request: play.mvc.Http.Request)
+POST     /private/v2/user/courses/list	    @controllers.courseenrollment.CourseEnrollmentController.privateGetUserEnrolledCourses(request: play.mvc.Http.Request)
+POST     /v1/course/enroll	    		@controllers.courseenrollment.CourseEnrollmentController.enrollCourse(request: play.mvc.Http.Request)
+POST     /v1/course/unenroll             @controllers.courseenrollment.CourseEnrollmentController.unenrollCourse(request: play.mvc.Http.Request)
+POST     /v1/course/admin/enroll	    		@controllers.courseenrollment.CourseEnrollmentController.adminEnrollCourse(request: play.mvc.Http.Request)
+POST     /v1/course/admin/unenroll             @controllers.courseenrollment.CourseEnrollmentController.adminUnenrollCourse(request: play.mvc.Http.Request)
+POST /v1/batch/bulk/enrollment          @controllers.bulkapimanagement.BulkUploadController.batchEnrollmentBulkUpload(request: play.mvc.Http.Request)
+POST /v1/batch/bulk/unenrollment          @controllers.bulkapimanagement.BulkUploadController.batchUnEnrollmentBulkUpload(request: play.mvc.Http.Request)
+POST     /v1/content/state/read	        @controllers.LearnerController.getContentState(request: play.mvc.Http.Request)
+POST     /private/v1/content/state/read	        @controllers.LearnerController.privateGetContentState(request: play.mvc.Http.Request)
+PATCH    /v1/user/content/state     	@controllers.LearnerController.updateContentState(request: play.mvc.Http.Request)
+PATCH    /v1/content/state/update     	@controllers.LearnerController.updateContentState(request: play.mvc.Http.Request)
+
+# Upload Job Management APIs - Check with Krisha  - TODO
+GET  /v1/upload/status/:pid             @controllers.bulkapimanagement.BulkUploadController.getUploadStatus(pid:String, request: play.mvc.Http.Request)
+GET  /v1/upload/statusDownloadLink/:pid @controllers.bulkapimanagement.BulkUploadController.getStatusDownloadLink(pid:String, request: play.mvc.Http.Request)
+
+# Page Management APIs
+POST	/v1/page/create				  @controllers.pagemanagement.PageController.createPage(request: play.mvc.Http.Request)
+PATCH	/v1/page/update				  @controllers.pagemanagement.PageController.updatePage(request: play.mvc.Http.Request)
+GET	    /v1/page/read/:pageId    		  @controllers.pagemanagement.PageController.getPageSetting(pageId:String, organisationId:String ?= null, request: play.mvc.Http.Request)
+GET	    /v1/page/all/settings			  @controllers.pagemanagement.PageController.getPageSettings(request: play.mvc.Http.Request)
+POST     /v1/page/assemble		  @controllers.pagemanagement.PageController.getPageData(request: play.mvc.Http.Request)
+POST     /v1/dial/assemble		  @controllers.pagemanagement.PageController.getDIALPageData(request: play.mvc.Http.Request)
+
+# Page Section Management APIs
+POST	/v1/page/section/create				  @controllers.pagemanagement.PageController.createPageSection(request: play.mvc.Http.Request)
+PATCH	/v1/page/section/update				  @controllers.pagemanagement.PageController.updatePageSection(request: play.mvc.Http.Request)
+GET	    /v1/page/section/list			@controllers.pagemanagement.PageController.getSections(request: play.mvc.Http.Request)
+GET     /v1/page/section/read/:sectionId		      @controllers.pagemanagement.PageController.getSection(sectionId:String, request: play.mvc.Http.Request)
+
+# Course Batch APIs
+POST     /v1/course/batch/create				@controllers.coursemanagement.CourseBatchController.createBatch(request: play.mvc.Http.Request)
+POST     /private/v1/course/batch/create		@controllers.coursemanagement.CourseBatchController.privateCreateBatch(request: play.mvc.Http.Request)
+PATCH 	 /v1/course/batch/update				@controllers.coursemanagement.CourseBatchController.updateBatch(request: play.mvc.Http.Request)
+GET		 /v1/course/batch/read/:batchId			@controllers.coursemanagement.CourseBatchController.getBatch(batchId:String, request: play.mvc.Http.Request)
+POST     /v1/course/batch/search                @controllers.coursemanagement.CourseBatchController.search(request: play.mvc.Http.Request)
+POST		 /v1/batch/participants/list			@controllers.coursemanagement.CourseBatchController.getParticipants(request: play.mvc.Http.Request)
+
+# Certificate APIs
+POST /v1/course/batch/cert/issue           @controllers.certificate.CertificateController.issueCertificate(request: play.mvc.Http.Request)
+PATCH /v1/course/batch/cert/template/add           @controllers.certificate.CertificateController.addCertificate(request: play.mvc.Http.Request)
+PATCH /v1/course/batch/cert/template/remove           @controllers.certificate.CertificateController.deleteCertificate(request: play.mvc.Http.Request)
+
+#QR Code Download APIs
+POST  /v1/course/qrcode/download                @controllers.qrcodedownload.QRCodeDownloadController.downloadQRCodes(request: play.mvc.Http.Request)
+
+#Course create APIs
+POST /v1/course/create              @controllers.coursemanagement.CourseController.createCourse(request: play.mvc.Http.Request)
+
+#Group APIs
+POST /v1/group/activity/agg                     @controllers.group.GroupAggController.getGroupActivityAggregates(request: play.mvc.Http.Request)
+
+#Summary Aggregate
+POST /v1/collection/summary                     @controllers.collectionsummaryaggregate.CollectionSummaryAggregateController.getCollectionSummaryAggregate(request: play.mvc.Http.Request)
+
+#Exhaust Proxy APIs
+POST /v1/jobrequest/submit                      @controllers.exhaustjob.ExhaustJobController.submitJobRequest(request: play.mvc.Http.Request)
+GET /v1/jobrequest/list/:tag                    @controllers.exhaustjob.ExhaustJobController.listJobRequest(tag:String, request: play.mvc.Http.Request)

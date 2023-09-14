@@ -1,0 +1,34 @@
+version: 2.1
+executorType: machine
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:14-jdk-buster-node-browsers-legacy
+      - image: circleci/redis:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: lms-dependency-cache-{{ checksum "pom.xml" }}
+      - run: sudo apt update
+      - run:
+          name: redis
+          command: sudo apt install redis-server -y
+      - run: mvn clean install -DforkCount=1 -e
+      - run: cd course-mw/enrolment-actor && mvn scoverage:report
+      - run: cd course-mw/sunbird-util/cache-utils && mvn scoverage:report
+      - run: cd service && mvn play2:dist
+      - save_cache:
+          key: lms-dependency-cache-{{ checksum "pom.xml" }}
+          paths: ~/.m2
+
+      - run:
+          name: sonar
+          command: |
+            JAVA_REPORT_PATHS=`find /home/circleci/project  -iname jacoco.xml | awk 'BEGIN { RS = "" ; FS = "\n"; OFS = ","}{$1=$1; print $0}'`
+            mvn verify -DskipTests=true sonar:sonar -Dsonar.projectKey=project-sunbird_sunbird-course-service -Dsonar.organization=project-sunbird -Dsonar.host.url=https://sonarcloud.io -Dsonar.pullrequest.branch=$srcbranch -Dsonar.pullrequest.key=$CIRCLE_PR_NUMBER -Dsonar.pullrequest.base=$tarbranch -Dsonar.coverage.exclusions=**/sunbird-util/sunbird-platform-core/**,**/course-actors-common/** -Dsonar.scala.coverage.reportPaths=/home/circleci/project/course-mw/enrolment-actor/target/scoverage.xml,/home/circleci/project/course-mw/sunbird-util/cache-utils/target/scoverage.xml -Dsonar.coverage.jacoco.xmlReportPaths=${JAVA_REPORT_PATHS}
+      
+workflows:
+  version: 2.1
+  workflow:
+    jobs:
+      - build
